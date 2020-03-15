@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.gdgm.stu.mapper.dao_stu_score">
+
+
+	<!-- 登录验证 -->
+	<select id="login_count" parameterType="com.gdgm.stu.pojo.login_admin"
+		resultType="int">
+		SELECT 
+         COUNT(*)
+         FROM
+         `admin` 
+         WHERE admin_no=#{admin_no} AND admin_password=#{admin_password}
+	</select>
+	<!-- 记录IP访问者 -->
+	<insert id="visit" parameterType="com.gdgm.stu.pojo.login_admin">
+		INSERT INTO
+		`student_system`.`visit` (
+		`visit_date`,
+		`visit_ip`,
+		`visitors`
+		)
+		VALUES
+		(
+		#{visit_date},
+		#{visit_ip},
+		#{admin_no}
+		);
+	</insert>
+
+	<!-- 成绩管理 -->
+	<select id="score" parameterType="com.gdgm.stu.pojo.stu_score"
+		resultType="com.gdgm.stu.pojo.stu_score">
+		SELECT
+		`student`.`student_year`,
+		`student`.`student_no`,
+		`student`.`student_password`,
+		`student`.`student_name`,
+		`student`.`student_id`,
+		`student`.`student_sex`,
+		`student`.`student_bir`,
+		`student`.`grade_no`,
+		`student`.`class_no`,
+		`student`.`student_phone`,
+		`student`.`student_home`,
+		`stu_grade`.`grade_name`,
+		`stu_class`.`class_name`,
+		`stu_score`.`student_year`,
+		`stu_score`.`term`,
+		`stu_score`.`student_no`,
+		`stu_score`.`course_no`,
+		`stu_score`.`score`,
+		`stu_score`.`type`
+		FROM
+		`stu_score` join `student` on `stu_score`.`student_no`=`student`.`student_no`
+		JOIN `stu_grade` ON `student`.grade_no=`stu_grade`.grade_no
+		JOIN `stu_class` ON `student`.class_no=`stu_class`.class_no
+		<where>
+			<if test="student_no!=null and student_no!=''">
+				and `student_no`=#{student_no}
+			</if>
+			<if test="student_year!=null and student_year!='请选择'">
+				and stu_score.student_year=#{student_year}
+			</if>
+			<if test="grade_name!=null and grade_name!='请选择'">
+				and stu_grade.grade_name=#{grade_name}
+			</if>
+			<if test="class_name!=null and class_name!='请选择'">
+				and stu_class.`class_name`=#{class_name}
+			</if>
+			<if test="student_name!=null and student_name!=''">
+				and student.`student_name`=#{student_name}
+			</if>
+		</where>
+		LIMIT #{start_page}, #{sum_page};
+	</select>
+
+	<!-- 分页  获得数目符合条件的学生总行数count_page -->
+	<select id="student_count" parameterType="com.gdgm.stu.pojo.stu_score" resultType="int">
+	      SELECT
+		count(*)
+		FROM
+		`stu_score` join `student` on `stu_score`.`student_no`=`student`.`student_no`
+		JOIN `stu_grade` ON `student`.grade_no=`stu_grade`.grade_no
+		JOIN `stu_class` ON `student`.class_no=`stu_class`.class_no
+		<where>
+			<if test="student_no!=null and student_no!=''">
+				and `student_no`=#{student_no}
+			</if>
+			<if test="student_year!=null and student_year!='请选择'">
+				and stu_score.student_year=#{student_year}
+			</if>
+			<if test="grade_name!=null and grade_name!='请选择'">
+				and stu_grade.grade_name=#{grade_name}
+			</if>
+			<if test="class_name!=null and class_name!='请选择'">
+				and stu_class.`class_name`=#{class_name}
+			</if>
+			<if test="student_name!=null and student_name!=''">
+				and student.`student_name`=#{student_name}
+			</if>
+		</where>
+	</select>
+</mapper>

@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.gdgm.stu.mapper.dao_system">
+   <select id="getip" resultType="com.gdgm.stu.pojo.login_admin">
+		SELECT
+		  `visit_date`,
+		  `visit_ip`,
+		  `visitors` 
+		FROM
+		  `student_system`.`visit` order by visit_date desc LIMIT 0,5
+   </select>
+</mapper>

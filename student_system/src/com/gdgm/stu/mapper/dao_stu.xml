@@ -1,0 +1,169 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.gdgm.stu.mapper.dao_stu">
+
+	<!-- 学生管理 -->
+	<select id="student" parameterType="com.gdgm.stu.pojo.student"
+		resultType="com.gdgm.stu.pojo.student">
+		SELECT
+		`student`.`student_year`,
+		`student`.`student_no`,
+		`student`.`student_password`,
+		`student`.`student_name`,
+		`student`.`student_id`,
+		`student`.`student_sex`,
+		`student`.`student_bir`,
+		`student`.`grade_no`,
+		`student`.`class_no`,
+		`student`.`student_phone`,
+		`student`.`student_home`,
+		`stu_grade`.`grade_name`,
+		`stu_class`.`class_name`
+		FROM
+		`student` JOIN `stu_grade` ON `student`.grade_no=`stu_grade`.grade_no
+		JOIN `stu_class` ON `student`.class_no=`stu_class`.class_no
+		<where>
+			<if test="student_no!=null and student_no!=''">
+				and `student_no`=#{student_no}
+			</if>
+			<if test="student_year!=null and student_year!='请选择'">
+				and student_year=#{student_year}
+			</if>
+			<if test="grade_name!=null and grade_name!='请选择'">
+				and stu_grade.grade_name=#{grade_name}
+			</if>
+			<if test="class_name!=null and class_name!='请选择'">
+				and stu_class.`class_name`=#{class_name}
+			</if>
+			<if test="student_name!=null and student_name!=''">
+				and student.`student_name`=#{student_name}
+			</if>
+		</where>
+		LIMIT #{start_page}, #{sum_page};
+	</select>
+
+	<!-- 学生管理   年度下拉框显示全部级别类型 -->
+	<select id="student_year_type" resultType="com.gdgm.stu.pojo.student">
+			SELECT distinct
+		  student_year
+		FROM
+		  `student` 
+	</select>
+
+	<!-- 学生管理   级别下拉框显示全部级别类型 -->
+	<select id="stu_grade_type" resultType="com.gdgm.stu.pojo.stu_grade">
+			SELECT 
+		  `grade_no`,
+		  `grade_name` 
+		FROM
+		  `stu_grade` 
+	</select>
+	
+	<!-- 学生管理   班别下拉框显示全部班别类型 -->
+	<select id="stu_class_type" resultType="com.gdgm.stu.pojo.stu_class">
+			SELECT 
+		  `class_no`,
+		  `class_name` 
+		FROM
+		  `stu_class` 
+	</select>
+	
+	<!-- 分页  获得数目符合条件的学生总行数count_page -->
+	<select id="student_count" parameterType="com.gdgm.stu.pojo.student" resultType="int">
+	      SELECT
+		count(*)
+		FROM
+		`student` JOIN `stu_grade` ON `student`.grade_no=`stu_grade`.grade_no
+		JOIN `stu_class` ON `student`.class_no=`stu_class`.class_no
+		<where>
+			<if test="student_no!=null and student_no!=''">
+				and `student_no`=#{student_no}
+			</if>
+			<if test="student_year!=null and student_year!='请选择'">
+				and student_year=#{student_year}
+			</if>
+			<if test="grade_name!=null and grade_name!='请选择'">
+				and stu_grade.grade_name=#{grade_name}
+			</if>
+			<if test="class_name!=null and class_name!='请选择'">
+				and stu_class.`class_name`=#{class_name}
+			</if>
+			<if test="student_name!=null and student_name!=''">
+				and student.`student_name`=#{student_name}
+			</if>
+		</where>
+	</select>
+	
+	<!-- 学生管理 修改学生信息 -->
+	<update id="student_update" parameterType="com.gdgm.stu.pojo.student">
+		UPDATE
+		`student`
+		SET
+		`student_no` = #{student_no},
+		`student_name` =#{student_name},
+		`student_id` = #{student_id},
+		`student_sex` = #{student_sex},
+		`student_bir` = #{student_bir},
+		`grade_no` = #{grade_no},
+		`class_no` =#{class_no},
+		`student_phone` = #{student_phone},
+		`student_home` = #{student_home}
+		WHERE `student_no` = #{old_stu_no}
+	</update>
+
+	<!-- 学生管理 删除学生信息 -->
+	<delete id="student_delete" parameterType="String">
+		DELETE
+		FROM
+		`student`
+		WHERE `student_no` = #{student_no} ;
+	</delete>
+
+	<!-- 学生管理 插入学生信息 -->
+	<insert id="student_insert" parameterType="com.gdgm.stu.pojo.student">
+		INSERT INTO
+		`student_system`.`student` (
+		`student_year`,
+		`student_no`,
+		`student_password`,
+		`student_name`,
+		`student_id`,
+		`student_sex`,
+		`student_bir`,
+		`grade_no`,
+		`class_no`,
+		`student_phone`,
+		`student_home`
+		)
+		VALUES
+		(
+		#{student_year},
+		#{student_no},
+		#{student_password},
+		#{student_name},
+		#{student_id},
+		#{student_sex},
+		#{student_bir},
+		#{grade_no},
+		#{class_no},
+		#{student_phone},
+		#{student_home}
+		) ;
+	</insert>
+
+	<!--学生管理 插入学生信息 判断学号是否存在 -->
+	<select id="student_alike" parameterType="com.gdgm.stu.pojo.student"
+		resultType="int">
+		SELECT
+		count(*)
+		FROM
+		`student`
+		where `student_no`=#{student_no}
+	</select>
+	
+	<insert id="updateItem" parameterType="com.gdgm.stu.pojo.images" >
+      insert into img(id,img_url) values(#{id},#{img_url})
+    </insert>
+</mapper>
